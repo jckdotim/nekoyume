@@ -37,26 +37,26 @@ def cli():
 @cli.command()
 @argument('private_key', type=PrivateKeyType())
 def mine(private_key: PrivateKey):
-    app.app_context().push()
-    Client(os.environ.get('SENTRY_DSN'))
+    with app.app_context():
+        Client(os.environ.get('SENTRY_DSN'))
 
-    while True:
-        Block.sync()
-        block = User(private_key).create_block(
-            [m
-             for m in Move.query.filter_by(block=None).limit(20).all()
-             if m.valid],
-            echo=echo,
-        )
-        if block:
-            block.broadcast()
-            echo(block)
+        while True:
+            Block.sync()
+            block = User(private_key).create_block(
+                [m
+                 for m in Move.query.filter_by(block=None).limit(20).all()
+                 if m.valid],
+                echo=echo,
+            )
+            if block:
+                block.broadcast()
+                echo(block)
 
 
 @cli.command()
 def shell():
-    app.app_context().push()
-    embed(globals(), locals())
+    with app.app_context():
+        embed(globals(), locals())
 
 
 @cli.command()
