@@ -19,8 +19,8 @@ def fx_app():
         'other_test': 'sqlite:///other_test.db?check_same_thread=false'
     }
     app.config['CELERY_ALWAYS_EAGER'] = True
-    app.app_context().push()
-    return app
+    with app.app_context():
+        yield app
 
 
 @fixture
@@ -72,8 +72,8 @@ def fx_other_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'TEST_DATABASE_URL', 'sqlite:///other_test.db'
     )
-    app.app_context().push()
-    return app
+    with app.app_context():
+        yield app
 
 
 @fixture

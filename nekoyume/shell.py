@@ -9,8 +9,8 @@ def run():
     parser = argparse.ArgumentParser(description='Nekoyume shell')
     args = parser.parse_args()
 
-    app.app_context().push()
-    embed(globals(), locals())
+    with app.app_context():
+        embed(globals(), locals())
 
 
 if __name__ == '__main__':
